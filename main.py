@@ -26,6 +26,7 @@ parser.add_argument('--resume', '-r', action='store_true',
 args = parser.parse_args()
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+#device= 'cpu'
 best_acc = 0  # best test accuracy
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
 
@@ -41,18 +42,18 @@ transform_test = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
 ])
-trainset = torchvision.datasets.ImageNet(
-    root='./data', train=True, download=True, transform=transform_train)
+trainset = torchvision.datasets.ImageFolder(
+    root='/data5/ILSVRC/Data/CLS-LOC/train', transform=transform_train)
 trainloader = torch.utils.data.DataLoader(
-    trainset, batch_size=128, shuffle=True, num_workers=2)
+    trainset, batch_size=128, shuffle=True, num_workers=8)
 
-testset = torchvision.datasets.ImageNet(
-    root='./data', train=False, download=True, transform=transform_test)
+testset = torchvision.datasets.ImageFolder(
+    root='/data5/ILSVRC/Data/CLS-LOC/val', transform=transform_test)
 testloader = torch.utils.data.DataLoader(
-    testset, batch_size=100, shuffle=False, num_workers=2)
+    testset, batch_size=100, shuffle=False, num_workers=8)
 
-classes = ('plane', 'car', 'bird', 'cat', 'deer',
-           'dog', 'frog', 'horse', 'ship', 'truck')
+#classes = ('plane', 'car', 'bird', 'cat', 'deer',
+#           'dog', 'frog', 'horse', 'ship', 'truck')
 
 # Model
 print('==> Building model..')
@@ -72,7 +73,7 @@ net = ResNet50()
 # net = RegNetX_200MF()
 net = net.to(device)
 if device == 'cuda':
-    net = torch.nn.DataParallel(net)
+    net = torch.nn.DataParallel(net, device_ids=[0])
     cudnn.benchmark = True
 
 if args.resume:
@@ -169,9 +170,9 @@ def test(epoch, file):
 
 if __name__ == "__main__":
     for epoch in range(start_epoch, start_epoch+10):
-        file_train = open("/Users/alex/Desktop/Rice/Sophomore2/Research/AdaSeg/pytorch-cifar-master/csv/ImageNet_" +
+        file_train = open("/home/hg31/work/Torch_SI/csv/ImageNet_" +
                           str(epoch) + ".train_rndCropFlip.SI.train"+".csv", "a")
-        file_test = open("/Users/alex/Desktop/Rice/Sophomore2/Research/AdaSeg/pytorch-cifar-master/csv/ImageNet_" + str(
+        file_test = open("/home/hg31/work/Torch_SI/csv/ImageNet_" + str(
             epoch) + ".test.SI.test" + ".csv", "a")
         train(epoch, file_train)
         test(epoch, file_test)
