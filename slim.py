@@ -137,6 +137,8 @@ def train(epoch):
         optimizer.zero_grad()
         output = model(data)
         loss = F.cross_entropy(output, target)
+        print("loss")
+        print(loss)
         avg_loss += loss.item()
         pred = output.data.max(1, keepdim=True)[1]
         train_acc += pred.eq(target.data.view_as(pred)).cpu().sum()

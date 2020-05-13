@@ -83,19 +83,14 @@ if args.dataset == 'cifar10':
                            # transforms.Pad(4),
                            # transforms.RandomCrop(32),
                            # transforms.RandomHorizontalFlip(),
-                           # transforms.ToTensor(),
+                           transforms.ToTensor()
                            # transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-                           transforms.Resize(224),
-                           transforms.RandomCrop(32),
-                           transforms.RandomHorizontalFlip(),
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
                        ])),
         batch_size=args.batch_size, shuffle=True, **kwargs)
     test_loader = torch.utils.data.DataLoader(
         datasets.CIFAR10('./data.cifar10', train=False, transform=transforms.Compose([
                            transforms.ToTensor(),
-                           transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+                           # transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
                        ])),
         batch_size=args.test_batch_size, shuffle=True, **kwargs)
 else:
@@ -105,19 +100,14 @@ else:
                            # transforms.Pad(4),
                            # transforms.RandomCrop(32),
                            # transforms.RandomHorizontalFlip(),
-                           # transforms.ToTensor(),
+                           transforms.ToTensor()
                            # transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
-                           transforms.Resize(224),
-                           transforms.RandomCrop(32),
-                           transforms.RandomHorizontalFlip(),
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
                        ])),
         batch_size=args.batch_size, shuffle=True, **kwargs)
     test_loader = torch.utils.data.DataLoader(
         datasets.CIFAR100('./data.cifar100', train=False, transform=transforms.Compose([
                            transforms.ToTensor(),
-                           transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+                           # transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
                        ])),
         batch_size=args.test_batch_size, shuffle=True, **kwargs)
 
@@ -440,10 +430,10 @@ def maxwell_boltzmann_cdf(x, a):  # torch version
 best_prec1 = 0.
 for epoch in range(args.start_epoch, args.epochs):
     print("On Epoch: " + str(epoch))
-    file_train = open("/home/hg31/work/Torch_SI/csv/CIAR100_" +
-                      str(epoch) + ".train_rndCropFlip.SI.train" + ".csv", "a")
-    file_test = open("/home/hg31/work/Torch_SI/csv/CIAR100_" + str(
-        epoch) + ".test.SI.test" + ".csv", "a")
+    file_train = open("/home/hg31/work/Torch_SI/csv/CIFAR100_" +
+                      str(epoch) + ".train_no_preprocessing.SI.train" + ".csv", "a")
+    file_test = open("/home/hg31/work/Torch_SI/csv/CIFAR100_" + str(
+        epoch) + ".test_no_preprocessing.SI.test" + ".csv", "a")
     # if epoch in [args.epochs*0.5, args.epochs*0.75]:
     #     for param_group in optimizer.param_groups:
     #         param_group['lr'] *= 0.1

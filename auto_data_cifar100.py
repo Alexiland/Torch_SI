@@ -18,7 +18,7 @@ import random
 
 # Training settings
 parser = argparse.ArgumentParser(description='PyTorch Slimming CIFAR training')
-parser.add_argument('--dataset', type=str, default='cifar10',
+parser.add_argument('--dataset', type=str, default='cifar100',
                     help='training dataset (default: cifar100)')
 parser.add_argument('--sparsity-regularization', '-sr', dest='sr', action='store_true',
                     help='train with channel sparsity regularization')
@@ -63,7 +63,7 @@ keep_ratio_min = 0.0
 loss_scale_max = 1.0
 loss_scale_min = 0.0
 crop_size = 32
-nclass = 10
+nclass = 100
 
 torch.manual_seed(args.seed)
 if args.cuda:
@@ -114,7 +114,7 @@ else:
         batch_size=args.test_batch_size, shuffle=True, **kwargs)
 
 # model = models.__dict__[args.arch](dataset=args.dataset, depth=args.depth)
-model = resnet(20)
+model = resnet(20, dataset='cifar100')
 if args.cuda:
     model.cuda()
 optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
@@ -312,6 +312,8 @@ def train(epoch):
             # print("hard image was updated to model")
             # output_hard = torch.nn.Upsample(size=(crop_size, crop_size), mode='nearest')(
             #     output_hard)
+            # print("target_hard")
+            # print(target_hard)
             loss_hard = F.cross_entropy(output_hard, target_hard)
         else:
             # output_hard = torch.zeros(0, nclass, crop_size, crop_size).cuda()
@@ -399,20 +401,17 @@ def efficient_test():
 
 
 def save_checkpoint(state, is_best, filepath):
-    torch.save(state, os.path.join(filepath, 'checkpoint_cifar10.pth.tar'))
+    torch.save(state, os.path.join(filepath, 'checkpoint_cifar100.pth.tar'))
     if is_best:
-        shutil.copyfile(os.path.join(filepath, 'checkpoint_cifar10.pth.tar'), os.path.join(filepath, 'model_best.pth.tar'))
+        shutil.copyfile(os.path.join(filepath, 'checkpoint_cifar100.pth.tar'), os.path.join(filepath, 'model_best.pth.tar'))
 
 
 # def init_project_IC_hyperparam(self):
-if (args.dataset == "cifar10"):
-    linear_hyperparam = np.load(
-        "/data1/datasets/dataset_distribution/{}_{}_train_linear.npy".format("CIFAR-10", crop_size))
-    mb_hyperparam = np.load("/data1/datasets/dataset_distribution/{}_{}_train_S.npy".format("CIFAR-10", crop_size))
-if (args.dataset == "cifar100"):
-    linear_hyperparam = np.load(
-        "/data1/datasets/dataset_distribution/{}_{}_train_linear.npy".format("CIFAR-100", crop_size))
-    mb_hyperparam = np.load("/data1/datasets/dataset_distribution/{}_{}_train_S.npy".format("CIFAR-100", crop_size))
+
+
+linear_hyperparam = np.load(
+    "/data1/datasets/dataset_distribution/{}_{}_train_linear.npy".format("CIFAR-100", crop_size))
+mb_hyperparam = np.load("/data1/datasets/dataset_distribution/{}_{}_train_S.npy".format("CIFAR-100", crop_size))
 linear_min = linear_hyperparam[0]
 linear_max = linear_hyperparam[1]
 mb_a = mb_hyperparam[0]
